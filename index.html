@@ -1,7 +1,31 @@
 <html>
 	<head>
+		<title>Checkout</title>
+  		<script src="https://js.stripe.com/v3/"></script>
 	</head>
 	<body>
-		<div>Hello, World!</div>
+		<button type="button" id="checkout-button">Pay!</button>
+		<script>
+			let params = new URLSearchParams(window.location.search);
+			let key = params.get("key")
+			let sessionId = params.get("session")
+
+			var stripe = Stripe(key);
+
+			var checkoutButton = document.getElementById('checkout-button');
+
+			checkoutButton.addEventListener('click', function() {
+			  stripe.redirectToCheckout({
+			    // Make the id field from the Checkout Session creation API response
+			    // available to this file, so you can provide it as argument here
+			    // instead of the {{CHECKOUT_SESSION_ID}} placeholder.
+			    sessionId: sessionId
+			  }).then(function (result) {
+			    // If `redirectToCheckout` fails due to a browser or network
+			    // error, display the localized error message to your customer
+			    // using `result.error.message`.
+			  });
+			});
+		</script>
 	</body>
 </html>
