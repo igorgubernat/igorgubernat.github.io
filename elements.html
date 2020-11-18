@@ -6,6 +6,8 @@
 		<link rel="stylesheet" href="StripeElements.css">
 	</head>
 <body>
+	<div id="card-element"></div>
+	<div id="card-errors"></div>
 
 	<script>
 		let params = new URLSearchParams(window.location.search);
@@ -14,6 +16,54 @@
 
 		let stripe = Stripe(key);
 		let elements = stripe.elements();
+
+		let style = {
+			base: {
+				color: "#32325d",
+				fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+				fontSmoothing: "antialiased",
+				fontSize: "16px",
+				"::placeholder": {
+					color: "#aab7c4"
+				}
+			},
+			invalid: {
+				color: "#fa755a",
+				iconColor: "#fa755a"
+			}
+		};
+
+		let cardElement = elements.create("card", {style: style});
+		cardElement.mount("#card-element");
+
+		cardElement.on('change', function(event) {
+			let displayError = document.getElementById('card-errors');
+			if (event.error) {
+				displayError.textContent = event.error.message;
+			} else {
+				displayError.textContent = '';
+			}
+		});
+
+		function createPaymentMethod(cardElement, customerId, priceId) {
+			return stripe.createPaymentMethod({
+				type: 'card',
+				card: cardElement,
+			}).then((result) => {
+				if (result.error) {
+					let displayError = document.getElementById('card-errors');
+					displayError.textContent = event.error.message;
+				} else {
+					createSubscription({
+						customerId: customerId,
+						paymentMethodId: result.paymentMethod.id,
+						priceId: priceId,
+					});
+				}
+			});
+		}
+
+
 		
 	</script>
 </body>

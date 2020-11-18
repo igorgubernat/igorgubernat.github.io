@@ -26,6 +26,21 @@
 			    // using `result.error.message`.
 			  });
 			});
+
+			fetch('https://api.stripe.com/v1/products', {
+				headers: {
+					'Authorization': 'Basic ' + btoa(key + ':')
+				}
+			})
+			.then(resp => {
+				if (resp.ok) {
+					return resp.json();
+				} else {
+					throw new Error("Response status: " + resp.status)
+				}
+			})
+			.then(body => console.log(body))
+			.catch(err => console.log(err));
 		</script>
 	</body>
 </html>
